@@ -3,11 +3,12 @@
 use std::{env, fs::File, io::Read};
 
 #[tauri::command]
-fn greet() -> String {
+fn send_memory_content(from: usize, to: usize) -> String {
+    println!("::send mem");
     let mut file = File::open("../screen_2.bin").unwrap();
     let mut ram: Vec<u8> = vec![];
     file.read_to_end(&mut ram).unwrap();
-    hex_format(&ram, 512, 570)
+    hex_format(&ram, from, to)
 }
 
 fn hex_format(buffer: &Vec<u8>, from: usize, to: usize) -> String {
@@ -32,7 +33,7 @@ fn hex_format(buffer: &Vec<u8>, from: usize, to: usize) -> String {
 
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![greet])
+        .invoke_handler(tauri::generate_handler![send_memory_content])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
